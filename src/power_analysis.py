@@ -1,6 +1,6 @@
 import math
 from statsmodels.stats.power import TTestIndPower
-
+"""Determines the required number of replications per condition via power analysis."""
 # Parameters
 effect_size = 0.5 #Cohen's d - we want a medium effect
 alpha = 0.05
