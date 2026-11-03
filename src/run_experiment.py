@@ -4,6 +4,8 @@ import numpy as np
 import time
 import pandas as pd
 
+"""Trains logistic regression on MNIST at five training set sizes, 50 replications each. Writes data/raw_results.csv."""
+
 (train_X, train_y), (test_X, test_y) = mnist.load_data()
 
 print('X_train: ' + str(train_X.shape))
@@ -14,6 +16,7 @@ print('Y_test:  '  + str(test_y.shape))
 test_X_reshaped = test_X.reshape(-1, 784)/ 255.0
 
 results = []
+np.random.seed(42)
 for size in [500, 1000, 2000, 4000, 8000]:
     for run in range(50):
         train_indices = np.random.choice(len(train_X), size=size, replace=False)
