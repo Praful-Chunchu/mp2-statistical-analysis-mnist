@@ -4,12 +4,16 @@ import matplotlib.pyplot as plt
 import statsmodels.api as sm
 import pingouin as pg
 import seaborn as sns
+from scipy.stats import t
 
 """Checks ANOVA assumptions, runs Welch's ANOVA and Games-Howell post hoc. Writes data/games_howell_results.csv and figures/qq_plots.png."""
 
 df = pd.read_csv("../data/raw_results.csv")
 
 train_size_grouped = df.groupby('train_size')['accuracy'].agg(['mean', 'std'])
+sd = train_size_grouped['std']
+drop = (sd.iloc[0] - sd.iloc[-1]) / sd.iloc[0]
+print(f"SD reduction from smallest to largest condition: {drop:.1%}")
 
 print(train_size_grouped)
 
@@ -67,4 +71,9 @@ gh_result = pg.pairwise_gameshowell(data=df, dv='accuracy', between='train_size'
 
 print("Post-HOC result with Games-Howell for Welch's ANOVA: ")
 print(gh_result)
+
+margin = t.ppf(0.975, gh_result['df']) * gh_result['se']
+gh_result['ci_low']  = gh_result['diff'] - margin
+gh_result['ci_high'] = gh_result['diff'] + margin
 gh_result.to_csv("../data/games_howell_results.csv", index=False)
+print(df.groupby('train_size')['train_time'].mean())
